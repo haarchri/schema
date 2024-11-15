@@ -3,11 +3,40 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from enum import Enum
+from typing import Dict, List, Optional
 
-from pydantic import BaseModel
+from pydantic import AwareDatetime, BaseModel, Field
 
 from .....io.k8s.apimachinery.pkg.apis.meta import v1
+
+
+class ClaimRef(BaseModel):
+    apiVersion: str
+    kind: str
+    name: str
+    namespace: str
+
+
+class CompositionRef(BaseModel):
+    name: str
+
+
+class CompositionRevisionRef(BaseModel):
+    name: str
+
+
+class CompositionRevisionSelector(BaseModel):
+    matchLabels: Dict[str, str]
+
+
+class CompositionSelector(BaseModel):
+    matchLabels: Dict[str, str]
+
+
+class CompositionUpdatePolicy(Enum):
+    Automatic = 'Automatic'
+    Manual = 'Manual'
 
 
 class Parameters(BaseModel):
@@ -16,8 +45,67 @@ class Parameters(BaseModel):
     versioning: Optional[bool] = None
 
 
+class ConfigRef(BaseModel):
+    name: Optional[str] = None
+
+
+class Metadata(BaseModel):
+    annotations: Optional[Dict[str, str]] = None
+    labels: Optional[Dict[str, str]] = None
+    type: Optional[str] = None
+
+
+class PublishConnectionDetailsTo(BaseModel):
+    configRef: Optional[ConfigRef] = Field(
+        default_factory=lambda: ConfigRef.model_validate({'name': 'default'})
+    )
+    metadata: Optional[Metadata] = None
+    name: str
+
+
+class ResourceRef(BaseModel):
+    apiVersion: str
+    kind: str
+    name: Optional[str] = None
+
+
+class WriteConnectionSecretToRef(BaseModel):
+    name: str
+    namespace: str
+
+
 class Spec(BaseModel):
+    claimRef: Optional[ClaimRef] = None
+    compositionRef: Optional[CompositionRef] = None
+    compositionRevisionRef: Optional[CompositionRevisionRef] = None
+    compositionRevisionSelector: Optional[CompositionRevisionSelector] = None
+    compositionSelector: Optional[CompositionSelector] = None
+    compositionUpdatePolicy: Optional[CompositionUpdatePolicy] = None
     parameters: Optional[Parameters] = None
+    publishConnectionDetailsTo: Optional[PublishConnectionDetailsTo] = None
+    resourceRefs: Optional[List[ResourceRef]] = None
+    writeConnectionSecretToRef: Optional[WriteConnectionSecretToRef] = None
+
+
+class Condition(BaseModel):
+    lastTransitionTime: AwareDatetime
+    message: Optional[str] = None
+    reason: str
+    status: str
+    type: str
+
+
+class ConnectionDetails(BaseModel):
+    lastPublishedTime: Optional[AwareDatetime] = None
+
+
+class Status(BaseModel):
+    claimConditionTypes: Optional[List[str]] = None
+    conditions: Optional[List[Condition]] = None
+    """
+    Conditions of the resource.
+    """
+    connectionDetails: Optional[ConnectionDetails] = None
 
 
 class XStorageBucket(BaseModel):
@@ -37,13 +125,13 @@ class XStorageBucket(BaseModel):
     """
     StorageBucketSpec defines the desired state of StorageBucket.
     """
-    status: Optional[Dict[str, Any]] = None
+    status: Optional[Status] = None
     """
     StorageBucketStatus defines the observed state of StorageBucket.
     """
 
 
-class Field(BaseModel):
+class FieldModel(BaseModel):
     apiVersion: Optional[str] = None
     """
     APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources

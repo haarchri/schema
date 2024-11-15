@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema StorageBucket:
     r"""
-    platform example com v1alpha1 storage bucket
+    StorageBucket is the Schema for the StorageBucket API.
 
     Attributes
     ----------
@@ -37,20 +37,26 @@ schema StorageBucket:
 
 schema PlatformExampleComV1alpha1StorageBucketSpec:
     r"""
-    platform example com v1alpha1 storage bucket spec
+    StorageBucketSpec defines the desired state of StorageBucket.
 
     Attributes
     ----------
+    compositeDeletePolicy : str, default is Undefined, optional
+        composite delete policy
     compositionRef : PlatformExampleComV1alpha1StorageBucketSpecCompositionRef, default is Undefined, optional
         composition ref
     compositionRevisionRef : PlatformExampleComV1alpha1StorageBucketSpecCompositionRevisionRef, default is Undefined, optional
         composition revision ref
+    compositionRevisionSelector : PlatformExampleComV1alpha1StorageBucketSpecCompositionRevisionSelector, default is Undefined, optional
+        composition revision selector
     compositionSelector : PlatformExampleComV1alpha1StorageBucketSpecCompositionSelector, default is Undefined, optional
         composition selector
-    compositionUpdatePolicy : str, default is "Automatic", optional
+    compositionUpdatePolicy : str, default is Undefined, optional
         composition update policy
     parameters : PlatformExampleComV1alpha1StorageBucketSpecParameters, default is Undefined, optional
         parameters
+    publishConnectionDetailsTo : PlatformExampleComV1alpha1StorageBucketSpecPublishConnectionDetailsTo, default is Undefined, optional
+        publish connection details to
     resourceRef : PlatformExampleComV1alpha1StorageBucketSpecResourceRef, default is Undefined, optional
         resource ref
     writeConnectionSecretToRef : PlatformExampleComV1alpha1StorageBucketSpecWriteConnectionSecretToRef, default is Undefined, optional
@@ -58,15 +64,21 @@ schema PlatformExampleComV1alpha1StorageBucketSpec:
     """
 
 
+    compositeDeletePolicy?: "Background" | "Foreground"
+
     compositionRef?: PlatformExampleComV1alpha1StorageBucketSpecCompositionRef
 
     compositionRevisionRef?: PlatformExampleComV1alpha1StorageBucketSpecCompositionRevisionRef
 
+    compositionRevisionSelector?: PlatformExampleComV1alpha1StorageBucketSpecCompositionRevisionSelector
+
     compositionSelector?: PlatformExampleComV1alpha1StorageBucketSpecCompositionSelector
 
-    compositionUpdatePolicy?: "Automatic" | "Manual" = "Automatic"
+    compositionUpdatePolicy?: "Automatic" | "Manual"
 
     parameters?: PlatformExampleComV1alpha1StorageBucketSpecParameters
+
+    publishConnectionDetailsTo?: PlatformExampleComV1alpha1StorageBucketSpecPublishConnectionDetailsTo
 
     resourceRef?: PlatformExampleComV1alpha1StorageBucketSpecResourceRef
 
@@ -99,6 +111,20 @@ schema PlatformExampleComV1alpha1StorageBucketSpecCompositionRevisionRef:
 
 
     name: str
+
+
+schema PlatformExampleComV1alpha1StorageBucketSpecCompositionRevisionSelector:
+    r"""
+    platform example com v1alpha1 storage bucket spec composition revision selector
+
+    Attributes
+    ----------
+    matchLabels : {str:str}, default is Undefined, required
+        match labels
+    """
+
+
+    matchLabels: {str:str}
 
 
 schema PlatformExampleComV1alpha1StorageBucketSpecCompositionSelector:
@@ -135,6 +161,64 @@ schema PlatformExampleComV1alpha1StorageBucketSpecParameters:
     region?: str
 
     versioning?: bool
+
+
+schema PlatformExampleComV1alpha1StorageBucketSpecPublishConnectionDetailsTo:
+    r"""
+    platform example com v1alpha1 storage bucket spec publish connection details to
+
+    Attributes
+    ----------
+    configRef : PlatformExampleComV1alpha1StorageBucketSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
+        config ref
+    metadata : PlatformExampleComV1alpha1StorageBucketSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
+        metadata
+    name : str, default is Undefined, required
+        name
+    """
+
+
+    configRef?: PlatformExampleComV1alpha1StorageBucketSpecPublishConnectionDetailsToConfigRef
+
+    metadata?: PlatformExampleComV1alpha1StorageBucketSpecPublishConnectionDetailsToMetadata
+
+    name: str
+
+
+schema PlatformExampleComV1alpha1StorageBucketSpecPublishConnectionDetailsToConfigRef:
+    r"""
+    platform example com v1alpha1 storage bucket spec publish connection details to config ref
+
+    Attributes
+    ----------
+    name : str, default is Undefined, optional
+        name
+    """
+
+
+    name?: str
+
+
+schema PlatformExampleComV1alpha1StorageBucketSpecPublishConnectionDetailsToMetadata:
+    r"""
+    platform example com v1alpha1 storage bucket spec publish connection details to metadata
+
+    Attributes
+    ----------
+    annotations : {str:str}, default is Undefined, optional
+        annotations
+    labels : {str:str}, default is Undefined, optional
+        labels
+    $type : str, default is Undefined, optional
+        type
+    """
+
+
+    annotations?: {str:str}
+
+    labels?: {str:str}
+
+    $type?: str
 
 
 schema PlatformExampleComV1alpha1StorageBucketSpecResourceRef:
@@ -175,16 +259,20 @@ schema PlatformExampleComV1alpha1StorageBucketSpecWriteConnectionSecretToRef:
 
 schema PlatformExampleComV1alpha1StorageBucketStatus:
     r"""
-    platform example com v1alpha1 storage bucket status
+    StorageBucketStatus defines the observed state of StorageBucket.
 
     Attributes
     ----------
+    claimConditionTypes : [str], default is Undefined, optional
+        claim condition types
     conditions : [PlatformExampleComV1alpha1StorageBucketStatusConditionsItems0], default is Undefined, optional
         Conditions of the resource.
     connectionDetails : PlatformExampleComV1alpha1StorageBucketStatusConnectionDetails, default is Undefined, optional
         connection details
     """
 
+
+    claimConditionTypes?: [str]
 
     conditions?: [PlatformExampleComV1alpha1StorageBucketStatusConditionsItems0]
 
